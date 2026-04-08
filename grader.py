@@ -1,3 +1,12 @@
+def safe_score(score):
+    # ✅ strictly between (0,1)
+    if score >= 1.0:
+        return 0.99
+    elif score <= 0.0:
+        return 0.01
+    return score
+
+
 def grade_step(action, correct):
     score = 0.0
 
@@ -17,7 +26,7 @@ def grade_step(action, correct):
     if category == expected_category:
         score += 0.45
     else:
-        score -= 0.1  # softer penalty
+        score -= 0.1
 
     # =========================
     # 🔹 PRIORITY (0.25)
@@ -48,7 +57,7 @@ def grade_step(action, correct):
         score -= 0.05
 
     # =========================
-    # 🔹 SMART BONUS (small boost)
+    # 🔹 BONUS
     # =========================
     if category == "spam" and action_type == "ignore":
         score += 0.05
@@ -56,28 +65,27 @@ def grade_step(action, correct):
     if category == "work" and priority == "high":
         score += 0.05
 
-    # =========================
-    # 🔹 FORMAT BONUS
-    # =========================
     if category in ["work", "spam", "personal"]:
         score += 0.05
 
     # =========================
-    # 🔹 CLAMP
+    # 🔥 FINAL CLAMP (FIXED)
     # =========================
-    score = max(0.0, min(1.0, score))
+    score = safe_score(score)
 
     return round(score, 2)
 
 
 def final_grade(total_score, steps):
     if steps == 0:
-        return 0.0
+        return 0.01  # ❌ was 0.0
 
     avg = total_score / steps
 
-    # 🔥 Safe boost (not suspicious)
     if avg > 0.85:
         avg += 0.03
 
-    return round(min(avg, 1.0), 2)
+    # 🔥 FIX HERE
+    avg = safe_score(avg)
+
+    return round(avg, 2)

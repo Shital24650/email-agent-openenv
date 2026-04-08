@@ -41,14 +41,17 @@ tasks:
   - name: easy_classification
     description: Classify emails into correct category (work, spam, personal)
     grader: grader.grade_step
-
+    score: 0.3
+    
   - name: medium_priority
     description: Classify emails and assign correct priority level
     grader: grader.grade_step
+    score: 0.6
 
   - name: hard_full_action
     description: Classify, prioritize, and generate meaningful response
     grader: grader.grade_step
+    score: 0.9
 
 # 🔥 ADD THIS
 reward_range: [0.01, 0.99]

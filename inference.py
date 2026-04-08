@@ -12,7 +12,7 @@ load_dotenv()
 # 🔥 Initialize OpenAI client (MANDATORY)
 client = OpenAI(
     base_url=os.getenv("API_BASE_URL"),
-    api_key=os.getenv("OPENAI_API_KEY")
+    api_key=os.getenv("HF_TOKEN")
 )
 
 MODEL = os.getenv("MODEL_NAME")

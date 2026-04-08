@@ -8,7 +8,8 @@ def safe_score(score):
 
 
 def grade_step(action, correct):
-    score = 0.0
+    # ✅ base score to avoid too many 0.01 values
+    score = 0.3
 
     # 🔥 Normalize
     category = str(action.category).lower().strip()
@@ -69,7 +70,7 @@ def grade_step(action, correct):
         score += 0.05
 
     # =========================
-    # 🔥 FINAL CLAMP (FIXED)
+    # 🔥 FINAL CLAMP
     # =========================
     score = safe_score(score)
 
@@ -78,14 +79,14 @@ def grade_step(action, correct):
 
 def final_grade(total_score, steps):
     if steps == 0:
-        return 0.01  # ❌ was 0.0
+        return 0.01  # ✅ avoid 0.0
 
     avg = total_score / steps
 
     if avg > 0.85:
         avg += 0.03
 
-    # 🔥 FIX HERE
+    # 🔥 ensure valid range
     avg = safe_score(avg)
 
     return round(avg, 2)

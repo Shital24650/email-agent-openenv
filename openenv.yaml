@@ -1,0 +1,54 @@
+name: email-agent-env
+description: RL-style environment simulating real-world email triage for agent decision-making
+version: 0.1
+
+observation_space:
+  type: object
+  properties:
+    email_id:
+      type: integer
+    subject:
+      type: string
+    body:
+      type: string
+    sender:
+      type: string
+
+action_space:
+  type: object
+  properties:
+    category:
+      type: string
+      enum: ["work", "spam", "personal"]
+    priority:
+      type: string
+      enum: ["high", "medium", "low"]
+    response:
+      type: string
+
+reward_space:
+  type: object
+  properties:
+    score:
+      type: number
+      minimum: 0.0
+      maximum: 1.0
+    feedback:
+      type: string
+
+# 🔥 ADD THIS (VERY IMPORTANT)
+tasks:
+  - name: easy_classification
+    description: Classify emails into correct category (work, spam, personal)
+
+  - name: medium_priority
+    description: Classify emails and assign correct priority level
+
+  - name: hard_full_action
+    description: Classify, prioritize, and generate meaningful response
+
+# 🔥 ADD THIS
+reward_range: [0.0, 1.0]
+
+# 🔥 ADD THIS
+difficulty: progressive

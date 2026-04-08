@@ -5,11 +5,13 @@ description = "OpenEnv Email Agent Environment"
 authors = [
     { name = "Shital Parab", email = "shitalparab2605@gmail.com" }
 ]
+
 dependencies = [
     "fastapi",
     "uvicorn",
-    "gradio"
+    "gradio",
+    "openenv-core>=0.2.0"
 ]
 
-[tool.setuptools]
-packages = ["."]
+[project.scripts]
+server = "server.app:app"

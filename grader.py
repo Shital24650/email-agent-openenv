@@ -38,7 +38,10 @@ def grade_step(observation, action, correct):
                 score -= 0.05
 
         if response:
-            score += 0.2 if len(response.split()) > 5 else 0.1
+            if len(response.split()) > 5:
+                score += 0.2
+            else:
+                score += 0.1
         else:
             score -= 0.05
 
@@ -56,3 +59,16 @@ def grade_step(observation, action, correct):
 
     except:
         return 0.5
+
+
+def final_grade(total_score, steps):
+    if steps <= 0:
+        return 0.01
+
+    avg = total_score / steps
+
+    if avg > 0.85:
+        avg += 0.03
+
+    avg = safe_score(avg)
+    return round(avg, 2)

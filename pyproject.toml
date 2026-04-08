@@ -1,0 +1,15 @@
+[project]
+name = "email-agent-openenv"
+version = "0.1.0"
+description = "OpenEnv Email Agent Environment"
+authors = [
+    { name = "Shital Parab", email = "shitalparab2605@gmail.com" }
+]
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "gradio"
+]
+
+[tool.setuptools]
+packages = ["."]

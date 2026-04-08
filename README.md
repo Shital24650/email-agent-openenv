@@ -43,6 +43,13 @@ Evaluates performance based on:
 
 ---
 
+## ▶️ How It Works
+
+1. Click **Run Email Agent 🚀**
+2. Agent processes multiple emails
+3. Logs are displayed in real-time
+4. Final score is generated
+
 ## 📊 Reward System
 
 - Score Range: **0.0 → 1.0**
@@ -63,7 +70,7 @@ OPENAI_API_KEY=your_api_key
 MODEL_NAME=gpt-4o-mini
 
 ## ▶️ Run
-python inference.py
+python app.py
 
 ## 🏆 Performance
 Baseline Score: 0.67

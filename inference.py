@@ -6,45 +6,30 @@ from env import EmailEnv
 from models import Action
 from grader import final_grade
 from dotenv import load_dotenv
-
 load_dotenv()
 
-# =========================
-# ✅ ENV VARIABLES (MANDATORY)
-# =========================
-API_BASE_URL = os.getenv("API_BASE_URL")
-MODEL = os.getenv("MODEL_NAME")
-API_KEY = os.getenv("HF_TOKEN")  # ✅ FIXED
 
-if not API_KEY:
-    print("[DEBUG] No API key found, running in fallback mode", flush=True)
-
-# =========================
-# ✅ OPENAI CLIENT (SAFE)
-# =========================
+# 🔥 Initialize OpenAI client (MANDATORY)
 client = OpenAI(
-    base_url=API_BASE_URL,
-    api_key=API_KEY if API_KEY else "dummy"  # ✅ prevents crash
+    base_url=os.getenv("API_BASE_URL"),
+    api_key=os.getenv("OPENAI_API_KEY")
 )
 
-# =========================
-# ✅ INIT ENV
-# =========================
+MODEL = os.getenv("MODEL_NAME")
+
+# 🔥 Initialize environment
 env = EmailEnv()
 obs = env.reset()
 
-total_score = 0.0
+total_score = 0
 steps = 0
-rewards = []
 
-print("[START] task=email_agent env=openenv model=" + str(MODEL), flush=True)
+print("[START] Email Agent Started")
 
-# =========================
-# 🔁 MAIN LOOP
-# =========================
 while True:
-    print(f"[STEP] step={steps+1} action=process_email reward=0.00 done=false error=null", flush=True)
+    print(f"[STEP] Processing Email ID: {obs.email_id}")
 
+    # 🔥 Prompt for LLM
     prompt = f"""
 You are an AI email assistant.
 
@@ -62,7 +47,7 @@ Return ONLY valid JSON:
 """
 
     try:
-        # ✅ LLM CALL
+        # 🔥 LLM call (MANDATORY)
         response = client.chat.completions.create(
             model=MODEL,
             messages=[{"role": "user", "content": prompt}],
@@ -70,6 +55,8 @@ Return ONLY valid JSON:
         )
 
         output = response.choices[0].message.content.strip()
+
+        # 🔥 Parse JSON safely
         parsed = json.loads(output)
 
         category = parsed.get("category", "work")
@@ -77,9 +64,7 @@ Return ONLY valid JSON:
         reply = parsed.get("response", "Handled email.")
 
     except Exception as e:
-        print(f"[DEBUG] Model error: {e}", flush=True)
-
-        # ✅ FALLBACK (VERY IMPORTANT)
+        # 🔥 Fallback (VERY IMPORTANT for robustness)
         text = (obs.subject + " " + obs.body).lower()
 
         if any(word in text for word in ["lottery", "click", "offer", "discount", "buy", "win"]):
@@ -97,32 +82,23 @@ Return ONLY valid JSON:
 
         reply = f"Handled email about: {obs.subject}"
 
-    # =========================
-    # ✅ STEP ENV
-    # =========================
+    # 🔥 Create action
     action = Action(
         category=category,
         priority=priority,
         response=reply
     )
 
+    # 🔥 Step environment
     obs, reward, done, _ = env.step(action)
 
     total_score += reward.score
-    rewards.append(reward.score)
     steps += 1
 
     if done:
         break
 
-# =========================
-# ✅ FINAL SCORE
-# =========================
+# 🔥 Final scoring
 final_score = final_grade(total_score, steps)
 
-rewards_str = ",".join(f"{r:.2f}" for r in rewards)
-
-print(
-    f"[END] success=true steps={steps} score={final_score:.3f} rewards={rewards_str}",
-    flush=True
-)
+print(f"[END] Final Score: {final_score}")

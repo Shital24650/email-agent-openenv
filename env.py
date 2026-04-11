@@ -5,7 +5,6 @@ import random
 
 class EmailEnv:
     def __init__(self):
-        # 🔥 Emails with difficulty + ground truth
         self.emails = [
             {
                 "id": 1,
@@ -66,18 +65,22 @@ class EmailEnv:
         self.index = 0
         self.done = False
 
-    # 🔹 RESET ENV
-    def reset(self):
+    # ✅ RESET (FIXED: accepts input)
+    def reset(self, input=None):
         self.index = 0
         self.done = False
         random.shuffle(self.emails)
+
+        # Optional: inject task input into first email
+        if input:
+            self.emails[0].update(input)
+
         return self._get_obs()
 
-    # 🔹 STEP FUNCTION
+    # ✅ STEP (FIXED grader call + safe execution)
     def step(self, action: Action):
         current_email = self.emails[self.index]
 
-        # 🔥 Create observation for grader
         observation = Observation(
             email_id=current_email["id"],
             subject=current_email["subject"],
@@ -85,24 +88,23 @@ class EmailEnv:
             sender=current_email["sender"]
         )
 
-        # 🔥 Correct answer
         correct = {
             "category": current_email["category"],
             "priority": current_email["priority"]
         }
 
-        # 🔥 Score from grader
+        # ✅ FIXED grader call
         try:
-            score = grade_step(observation, action, correct)
-        except:
-            score = 0.5  # safe fallback
+            score = grade_step(action, correct)
+        except Exception:
+            score = 0.0  # safe fallback
 
-        # 🔥 HARD task: enforce better response
+        # Extra penalty for hard tasks
         if current_email["difficulty"] == "hard":
             if not action.response or len(action.response.strip()) < 15:
                 score -= 0.2
 
-        # 🔥 Normalize inputs
+        # Normalize action values
         action.category = str(action.category).lower().strip()
         action.priority = str(action.priority).lower().strip()
 
@@ -112,10 +114,10 @@ class EmailEnv:
         if action.priority not in ["high", "medium", "low"]:
             score -= 0.05
 
-        # 🔥 FINAL CLAMP (STRICTLY BETWEEN 0 AND 1)
-        score = max(0.01, min(0.99, score))
+        # ✅ FIXED reward range (STRICT)
+        score = max(0.0, min(1.0, score))
 
-        # 🔥 Feedback
+        # Feedback
         if score > 0.8:
             feedback = "correct"
         elif score > 0.5:
@@ -125,18 +127,18 @@ class EmailEnv:
 
         reward = Reward(score=round(score, 2), feedback=feedback)
 
-        # 🔥 Move to next email
+        # Move forward
         self.index += 1
         if self.index >= len(self.emails):
             self.done = True
 
         return self._get_obs(), reward, self.done, {}
 
-    # 🔹 STATE
+    # ✅ STATE
     def state(self):
         return {"current_index": self.index}
 
-    # 🔹 OBSERVATION
+    # ✅ OBSERVATION
     def _get_obs(self):
         if self.index >= len(self.emails):
             return None
@@ -149,21 +151,3 @@ class EmailEnv:
             body=e["body"],
             sender=e["sender"]
         )
-
-TASKS = [
-    {
-        "name": "easy_classification",
-        "description": "Classify email category",
-        "grader": grade_step
-    },
-    {
-        "name": "medium_priority",
-        "description": "Assign correct priority",
-        "grader": grade_step
-    },
-    {
-        "name": "hard_full_action",
-        "description": "Full email handling",
-        "grader": grade_step
-    }
-]

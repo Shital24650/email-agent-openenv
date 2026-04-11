@@ -6,9 +6,10 @@ from env import EmailEnv
 from models import Action
 from grader import final_grade
 from dotenv import load_dotenv
+
 load_dotenv()
 
-# 🔥 Initialize OpenAI client (MANDATORY)
+# 🔥 Initialize OpenAI client
 client = OpenAI(
     base_url=os.getenv("API_BASE_URL"),
     api_key=os.getenv("HF_TOKEN")
@@ -24,24 +25,53 @@ total_score = 0
 steps = 0
 rewards_list = []
 
-# ✅ FIXED START FORMAT
 print(f"[START] task=email_agent env=email_env model={MODEL}")
 
+
+def safe_parse_json(output: str):
+    """Clean and parse model output safely"""
+    try:
+        output = output.strip()
+
+        # Remove markdown ```json ```
+        if output.startswith("```"):
+            parts = output.split("```")
+            if len(parts) >= 2:
+                output = parts[1]
+            if output.startswith("json"):
+                output = output[4:]
+
+        return json.loads(output.strip())
+
+    except Exception:
+        return None
+
+
 while True:
-    # 🔥 Prompt for LLM
+    # 🔥 Strong prompt for better accuracy
     prompt = f"""
-You are an AI email assistant.
+You are a STRICT email classification AI.
 
-Classify and handle the email below:
+Rules:
+- spam → ads, lottery, offers, promotions
+- work → meetings, invoices, urgent issues, business
+- personal → friends, casual, social
 
+Priority:
+- high → urgent, asap, server down
+- medium → normal communication
+- low → spam or non-important
+
+Email:
 Subject: {obs.subject}
 Body: {obs.body}
 
-Return ONLY valid JSON:
+Return ONLY valid JSON (no markdown):
+
 {{
   "category": "spam | work | personal",
   "priority": "low | medium | high",
-  "response": "short helpful reply"
+  "response": "short professional reply"
 }}
 """
 
@@ -52,14 +82,18 @@ Return ONLY valid JSON:
             temperature=0
         )
 
-        output = response.choices[0].message.content.strip()
-        parsed = json.loads(output)
+        raw_output = response.choices[0].message.content
+        parsed = safe_parse_json(raw_output)
 
-        category = parsed.get("category", "work")
-        priority = parsed.get("priority", "medium")
-        reply = parsed.get("response", "Handled email.")
+        if parsed:
+            category = parsed.get("category", "work").lower().strip()
+            priority = parsed.get("priority", "medium").lower().strip()
+            reply = parsed.get("response", "Handled email.")
+        else:
+            raise ValueError("Invalid JSON")
 
     except Exception:
+        # 🔥 Strong fallback (rare now)
         text = (obs.subject + " " + obs.body).lower()
 
         if any(word in text for word in ["lottery", "click", "offer", "discount", "buy", "win"]):
@@ -91,7 +125,6 @@ Return ONLY valid JSON:
     total_score += reward.score
     rewards_list.append(reward.score)
 
-    # ✅ FIXED STEP FORMAT
     print(
         f"[STEP] step={steps} action={category}|{priority} "
         f"reward={reward.score:.2f} done={str(done).lower()} error=null"
@@ -104,7 +137,6 @@ Return ONLY valid JSON:
 final_score = final_grade(total_score, steps)
 success = final_score > 0.5
 
-# ✅ FIXED END FORMAT
 print(
     f"[END] success={str(success).lower()} steps={steps} "
     f"score={final_score:.2f} rewards=" +

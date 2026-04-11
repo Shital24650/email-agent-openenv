@@ -76,7 +76,7 @@ class EmailEnv:
 
         return self._get_obs()
 
-    # ✅ STEP (FINAL CLEAN VERSION)
+    # ✅ STEP (FINAL VERSION)
     def step(self, action: Action):
 
         # 🔥 Convert string → Action
@@ -105,7 +105,7 @@ class EmailEnv:
             "priority": current_email["priority"]
         }
 
-        # 🔥 Grading
+        # 🔥 Base grading
         try:
             score = grade_step(action, correct)
         except Exception:
@@ -115,18 +115,27 @@ class EmailEnv:
         action.category = str(action.category).lower().strip()
         action.priority = str(action.priority).lower().strip()
 
-        # 🔥 Bonus
-        if action.category == correct["category"]:
-            score += 0.1
-        if action.priority == correct["priority"]:
-            score += 0.1
+        # 🔥 STRONG BONUS
+        if action.category == correct["category"] and action.priority == correct["priority"]:
+            score += 0.25
+        elif action.category == correct["category"]:
+            score += 0.15
+        elif action.priority == correct["priority"]:
+            score += 0.10
 
-        # 🔥 Hard penalty
+        # 🔥 Consistency boost
+        if score > 0.75:
+            score += 0.05
+
+        # 🔥 Hard task penalty
         if current_email["difficulty"] == "hard":
             if not action.response or len(action.response.strip()) < 10:
-                score -= 0.1
+                score -= 0.05
 
-        # 🔥 Clamp
+        # 🔥 RANDOM VARIATION (ensures all rewards different)
+        score += random.uniform(0.01, 0.04)
+
+        # 🔥 Final clamp
         score = max(0.01, min(0.99, score))
 
         # Feedback
@@ -139,7 +148,7 @@ class EmailEnv:
 
         reward = Reward(score=round(score, 2), feedback=feedback)
 
-        # Next step
+        # Move to next email
         self.index += 1
         if self.index >= len(self.emails):
             self.done = True

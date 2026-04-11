@@ -4,67 +4,67 @@ def clamp_score(score):
     return min(0.99, max(0.01, score))
 
 
-def grade_step(observation, action, correct):
-    score = 0.2  # ✅ reduced base score
+__all__ = ["grade_step", "final_grade"]
+
+def clamp_score(score):
+    return min(0.99, max(0.01, score))
+
+
+def grade_step(action, correct):
+    score = 0.4  # 🔥 higher base
 
     try:
         category = str(action.category).lower().strip()
         priority = str(action.priority).lower().strip()
-        response = str(action.response).lower().strip() if action.response else ""
-        action_type = str(getattr(action, "action", "")).lower().strip()
+        response = str(action.response).strip() if action.response else ""
 
         expected_category = correct.get("category", "")
         expected_priority = correct.get("priority", "")
-        expected_action = correct.get("action_type", "")
 
-        # Category scoring
+        # ✅ Category (main signal)
         if category == expected_category:
-            score += 0.35  # ✅ reduced
+            score += 0.3
         else:
-            score -= 0.1
+            score -= 0.05
 
-        # Priority scoring
+        # ✅ Priority
         if priority == expected_priority:
-            score += 0.2  # ✅ reduced
+            score += 0.2
         else:
             score -= 0.05
 
-        # Action type scoring
-        if expected_action:
-            if action_type == expected_action:
-                score += 0.15
-            else:
-                score -= 0.05
+        # ✅ Response (only bonus, no heavy penalty)
+        if response and len(response.split()) >= 3:
+            score += 0.1
 
-        # Response scoring
-        if response:
-            if len(response.split()) > 5:
-                score += 0.15  # ✅ reduced
-            else:
-                score += 0.1
-        else:
-            score -= 0.05
+        # 🔥 Strong bonus for perfect match
+        if category == expected_category and priority == expected_priority:
+            score += 0.1
 
-        # Bonus rules (all reduced)
-        if category == "spam" and action_type == "ignore":
-            score += 0.02
-
-        if category == "work" and priority == "high":
-            score += 0.02
-
+        # 🔥 Light realism bonus
         if category in ["work", "spam", "personal"]:
-            score += 0.02
+            score += 0.05
 
-        # Round then clamp
-        score = round(score, 2)
-        score = clamp_score(score)
+        # 🔥 Final clamp
+        score = clamp_score(round(score, 2))
 
-        
         return score
 
     except Exception:
-        return 0.5
+        return 0.6  # safer fallback
 
+
+def final_grade(total_score, steps):
+    if steps <= 0:
+        return 0.01
+
+    avg = total_score / steps
+
+    # 🔥 Boost high performers
+    if avg > 0.85:
+        avg += 0.05
+
+    return clamp_score(round(avg, 2))
 
 def final_grade(total_score, steps):
     if steps <= 0:

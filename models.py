@@ -8,9 +8,10 @@ class Observation(BaseModel):
     sender: str
 
 class Action(BaseModel):
-    category: str   # work / spam / personal
-    priority: str   # high / medium / low
-    response: Optional[str]
+    category: str
+    priority: str
+    response: str
+    action: str = "respond"
 
 class Reward(BaseModel):
     score: float

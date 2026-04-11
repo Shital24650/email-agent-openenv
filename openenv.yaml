@@ -1,7 +1,11 @@
 name: email-agent-env
 description: RL-style environment simulating real-world email triage for agent decision-making
 version: 0.1
+
+# ✅ Environment mapping (MUST match env.py)
 environment: env:EmailEnv
+
+# ✅ Observation Space
 observation_space:
   type: object
   properties:
@@ -14,6 +18,7 @@ observation_space:
     sender:
       type: string
 
+# ✅ Action Space
 action_space:
   type: object
   properties:
@@ -26,35 +31,45 @@ action_space:
     response:
       type: string
 
+# ✅ Reward Space
 reward_space:
   type: object
   properties:
     score:
       type: number
-      minimum: 0.01
-      maximum: 0.99
+      minimum: 0.0
+      maximum: 1.0
     feedback:
       type: string
 
-# 🔥 ADD THIS (VERY IMPORTANT)
+# ✅ TASKS (WITH INPUT — VERY IMPORTANT)
 tasks:
   - id: easy_classification
-    description: Classify emails into correct category
+    description: Classify email category correctly
     grader: grader:grade_step
-    weight: 0.3
+    input:
+      email_id: 101
+      subject: "Win a free iPhone"
+      body: "Click here to claim your prize"
+      sender: "spam@promo.com"
 
   - id: medium_priority
     description: Assign correct priority level
     grader: grader:grade_step
-    weight: 0.3
+    input:
+      email_id: 102
+      subject: "Team meeting tomorrow"
+      body: "Please join at 10 AM"
+      sender: "manager@company.com"
 
   - id: hard_full_action
-    description: Full email handling
+    description: Full email handling (category + priority + response)
     grader: grader:grade_step
-    weight: 0.4
+    input:
+      email_id: 103
+      subject: "Urgent: Production bug"
+      body: "System is down, fix immediately"
+      sender: "client@business.com"
 
-# 🔥 ADD THIS
-reward_range: [0.01, 0.99]
-
-# 🔥 ADD THIS
-difficulty: progressive
+# ✅ REQUIRED FOR VALIDATION
+reward_range: [0.0, 1.0]

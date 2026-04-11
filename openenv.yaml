@@ -40,17 +40,17 @@ reward_space:
 tasks:
   - id: easy_classification
     description: Classify emails into correct category
-    grader: grader.grade_step
+    grader: grader:grade_step
     weight: 0.3
 
   - id: medium_priority
     description: Assign correct priority level
-    grader: grader.grade_step
+    grader: grader:grade_step
     weight: 0.3
 
   - id: hard_full_action
     description: Full email handling
-    grader: grader.grade_step
+    grader: grader:grade_step
     weight: 0.4
 
 # 🔥 ADD THIS

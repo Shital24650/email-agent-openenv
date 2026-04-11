@@ -8,7 +8,6 @@ from grader import final_grade
 from dotenv import load_dotenv
 load_dotenv()
 
-
 # 🔥 Initialize OpenAI client (MANDATORY)
 client = OpenAI(
     base_url=os.getenv("API_BASE_URL"),
@@ -23,12 +22,12 @@ obs = env.reset()
 
 total_score = 0
 steps = 0
+rewards_list = []
 
-print("[START] Email Agent Started")
+# ✅ FIXED START FORMAT
+print(f"[START] task=email_agent env=email_env model={MODEL}")
 
 while True:
-    print(f"[STEP] Processing Email ID: {obs.email_id}")
-
     # 🔥 Prompt for LLM
     prompt = f"""
 You are an AI email assistant.
@@ -47,7 +46,6 @@ Return ONLY valid JSON:
 """
 
     try:
-        # 🔥 LLM call (MANDATORY)
         response = client.chat.completions.create(
             model=MODEL,
             messages=[{"role": "user", "content": prompt}],
@@ -55,16 +53,13 @@ Return ONLY valid JSON:
         )
 
         output = response.choices[0].message.content.strip()
-
-        # 🔥 Parse JSON safely
         parsed = json.loads(output)
 
         category = parsed.get("category", "work")
         priority = parsed.get("priority", "medium")
         reply = parsed.get("response", "Handled email.")
 
-    except Exception as e:
-        # 🔥 Fallback (VERY IMPORTANT for robustness)
+    except Exception:
         text = (obs.subject + " " + obs.body).lower()
 
         if any(word in text for word in ["lottery", "click", "offer", "discount", "buy", "win"]):
@@ -92,13 +87,26 @@ Return ONLY valid JSON:
     # 🔥 Step environment
     obs, reward, done, _ = env.step(action)
 
-    total_score += reward.score
     steps += 1
+    total_score += reward.score
+    rewards_list.append(reward.score)
+
+    # ✅ FIXED STEP FORMAT
+    print(
+        f"[STEP] step={steps} action={category}|{priority} "
+        f"reward={reward.score:.2f} done={str(done).lower()} error=null"
+    )
 
     if done:
         break
 
 # 🔥 Final scoring
 final_score = final_grade(total_score, steps)
+success = final_score > 0.5
 
-print(f"[END] Final Score: {final_score}")
+# ✅ FIXED END FORMAT
+print(
+    f"[END] success={str(success).lower()} steps={steps} "
+    f"score={final_score:.2f} rewards=" +
+    ",".join(f"{r:.2f}" for r in rewards_list)
+)

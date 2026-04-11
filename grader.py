@@ -1,11 +1,8 @@
 __all__ = ["grade_step", "final_grade"]
 
-def safe_score(score):
-    if score >= 1.0:
-        return 0.99
-    elif score <= 0.0:
-        return 0.01
-    return score
+def clamp_score(score):
+    # Ensures score is STRICTLY between (0,1)
+    return min(0.99, max(0.01, score))
 
 
 def grade_step(observation, action, correct):
@@ -21,22 +18,26 @@ def grade_step(observation, action, correct):
         expected_priority = correct.get("priority", "")
         expected_action = correct.get("action_type", "")
 
+        # Category scoring
         if category == expected_category:
             score += 0.45
         else:
             score -= 0.1
 
+        # Priority scoring
         if priority == expected_priority:
             score += 0.25
         else:
             score -= 0.05
 
+        # Action type scoring
         if expected_action:
             if action_type == expected_action:
                 score += 0.15
             else:
                 score -= 0.05
 
+        # Response scoring
         if response:
             if len(response.split()) > 5:
                 score += 0.2
@@ -45,6 +46,7 @@ def grade_step(observation, action, correct):
         else:
             score -= 0.05
 
+        # Bonus rules
         if category == "spam" and action_type == "ignore":
             score += 0.05
 
@@ -54,10 +56,14 @@ def grade_step(observation, action, correct):
         if category in ["work", "spam", "personal"]:
             score += 0.05
 
-        score = safe_score(score)
-        return round(score, 2)
+        # ✅ FIX: round FIRST, then clamp
+        score = round(score, 2)
+        score = clamp_score(score)
 
-    except:
+        return score
+
+    except Exception:
+        # Keep fallback safe as well
         return 0.5
 
 
@@ -70,5 +76,8 @@ def final_grade(total_score, steps):
     if avg > 0.85:
         avg += 0.03
 
-    avg = safe_score(avg)
-    return round(avg, 2)
+    # ✅ FIX: round FIRST, then clamp
+    avg = round(avg, 2)
+    avg = clamp_score(avg)
+
+    return avg

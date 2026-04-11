@@ -1,7 +1,7 @@
 name: email-agent-env
 description: RL-style environment simulating real-world email triage for agent decision-making
 version: 0.1
-
+environment: env:EmailEnv
 observation_space:
   type: object
   properties:

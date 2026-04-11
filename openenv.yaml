@@ -42,40 +42,45 @@ reward_space:
     feedback:
       type: string
 
-# ✅ TASKS (WITH INPUT — VERY IMPORTANT)
 tasks:
   - id: easy_classification
     description: Classify email category correctly
     grader: grader:grade_step
-    weight: 0.3
-    difficulty: easy
     input:
       email_id: 101
       subject: "Win a free iPhone"
       body: "Click here to claim your prize"
       sender: "spam@promo.com"
+    expected:
+      category: "spam"
+      priority: "low"
+      response: ""
 
   - id: medium_priority
-    description: Assign correct priority level
+    description: Assign correct priority
     grader: grader:grade_step
-    weight: 0.3
-    difficulty: medium
     input:
       email_id: 102
-      subject: "Team meeting tomorrow"
-      body: "Please join at 10 AM"
+      subject: "Meeting tomorrow"
+      body: "Join at 10 AM"
       sender: "manager@company.com"
+    expected:
+      category: "work"
+      priority: "medium"
+      response: ""
 
   - id: hard_full_action
-    description: Full email handling (category + priority + response)
+    description: Full email handling
     grader: grader:grade_step
-    weight: 0.4
-    difficulty: hard
     input:
       email_id: 103
-      subject: "Urgent: Production bug"
-      body: "System is down, fix immediately"
-      sender: "client@business.com"
+      subject: "URGENT: Server down"
+      body: "Fix immediately"
+      sender: "client@company.com"
+    expected:
+      category: "work"
+      priority: "high"
+      response: "We are working on it"
 
 # ✅ REQUIRED FOR VALIDATION
 reward_range: [0.0, 1.0]

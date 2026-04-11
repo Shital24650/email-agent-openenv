@@ -149,3 +149,21 @@ class EmailEnv:
             body=e["body"],
             sender=e["sender"]
         )
+
+TASKS = [
+    {
+        "name": "easy_classification",
+        "description": "Classify email category",
+        "grader": grade_step
+    },
+    {
+        "name": "medium_priority",
+        "description": "Assign correct priority",
+        "grader": grade_step
+    },
+    {
+        "name": "hard_full_action",
+        "description": "Full email handling",
+        "grader": grade_step
+    }
+]

@@ -1,12 +1,11 @@
 __all__ = ["grade_step", "final_grade"]
 
 def clamp_score(score):
-    # Ensures score is STRICTLY between (0,1)
     return min(0.99, max(0.01, score))
 
 
 def grade_step(observation, action, correct):
-    score = 0.3
+    score = 0.2  # ✅ reduced base score
 
     try:
         category = str(action.category).lower().strip()
@@ -20,13 +19,13 @@ def grade_step(observation, action, correct):
 
         # Category scoring
         if category == expected_category:
-            score += 0.45
+            score += 0.35  # ✅ reduced
         else:
             score -= 0.1
 
         # Priority scoring
         if priority == expected_priority:
-            score += 0.25
+            score += 0.2  # ✅ reduced
         else:
             score -= 0.05
 
@@ -40,30 +39,30 @@ def grade_step(observation, action, correct):
         # Response scoring
         if response:
             if len(response.split()) > 5:
-                score += 0.2
+                score += 0.15  # ✅ reduced
             else:
                 score += 0.1
         else:
             score -= 0.05
 
-        # Bonus rules
+        # Bonus rules (all reduced)
         if category == "spam" and action_type == "ignore":
-            score += 0.05
+            score += 0.02
 
         if category == "work" and priority == "high":
-            score += 0.05
+            score += 0.02
 
         if category in ["work", "spam", "personal"]:
-            score += 0.05
+            score += 0.02
 
-        # ✅ FIX: round FIRST, then clamp
+        # Round then clamp
         score = round(score, 2)
         score = clamp_score(score)
 
+        
         return score
 
     except Exception:
-        # Keep fallback safe as well
         return 0.5
 
 
@@ -76,8 +75,8 @@ def final_grade(total_score, steps):
     if avg > 0.85:
         avg += 0.03
 
-    # ✅ FIX: round FIRST, then clamp
     avg = round(avg, 2)
     avg = clamp_score(avg)
 
+    
     return avg

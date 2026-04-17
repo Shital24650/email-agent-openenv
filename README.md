@@ -1,64 +1,131 @@
-# 📧 Email Agent OpenEnv
+# 📧 RL-Based AI Email Orchestrator Agent
 
 ## 🚀 Overview
-This project implements an intelligent email agent designed to simulate real-world email triage.
 
-The agent can:
-- Classify emails → *work, spam, personal*
-- Assign priority → *high, medium, low*
-- Generate contextual responses
-- Decide actions → *reply, ignore, escalate*
+This project implements a **production-style AI email agent** that autonomously processes and manages incoming emails using LLM-driven decision-making combined with deterministic evaluation.
+
+The system simulates **real-world email triage workflows**, where reliability, consistency, and fallback mechanisms are critical.
+
+### ✅ Core Capabilities
+- Email classification → *work, spam, personal*  
+- Priority assignment → *high, medium, low*  
+- Context-aware response generation  
+- Action selection → *reply, ignore, escalate*  
+
+---
+
+## 🧩 System Architecture
+Incoming Email
+      ↓
+LLM Reasoning Engine
+      ↓
+Classification + Priority + Response
+      ↓
+Action Decision (Reply / Ignore / Escalate)
+      ↓
+Memory Layer (context consistency)
+      ↓
+Fallback System (guaranteed output)
+      ↓
+Deterministic Grader (evaluation)
+
 
 ---
 
 ## 🧠 Key Features
 
-### 🔹 LLM-Based Decision Making
-Uses a language model to understand email context and make intelligent decisions.
+### 🔹 LLM-Orchestrated Decision Engine
+Uses an LLM to perform multi-step reasoning across classification, prioritization, and response generation.
 
-### 🔹 Memory-Aware Reasoning
-Maintains recent decision history to improve consistency across emails.
+### 🔹 Memory-Aware Workflow
+Maintains recent decision context to ensure consistency across multiple emails.
 
-### 🔹 Robust Retry Mechanism
-Handles API failures with retries to ensure stability.
+### 🔹 Fault-Tolerant Design
+Implements retry logic and a rule-based fallback system to ensure the agent **never fails silently**.
 
-### 🔹 Rule-Based Fallback (Critical)
-Guarantees output even if the LLM fails — prevents crashes.
+### 🔹 Deterministic Evaluation (RL-style)
+Custom grading system evaluates:
+- Classification accuracy  
+- Priority correctness  
+- Response quality  
 
-### 🔹 Deterministic Grading System
-Evaluates performance based on:
-- Category accuracy
-- Priority accuracy
-- Response quality
-
----
-
-## 🎯 Tasks
-
-| Level   | Description |
-|--------|------------|
-| Easy   | Classify email |
-| Medium | Classify + assign priority |
-| Hard   | Full handling (classification + response + action) |
+This enables **measurable performance improvement**, similar to reinforcement learning feedback loops.
 
 ---
 
-## ▶️ How It Works
+## ⚙️ Workflow
 
-1. Click **Run Email Agent 🚀**
-2. Agent processes multiple emails
-3. Logs are displayed in real-time
-4. Final score is generated
+1. Input email is parsed  
+2. LLM performs reasoning and generates structured output  
+3. System assigns:
+   - Category  
+   - Priority  
+   - Response  
+   - Action  
+4. Memory layer updates context  
+5. Fallback activates if LLM fails  
+6. Output is scored using deterministic grading  
+
+---
 
 ## 📊 Reward System
 
-- Score Range: **0.0 → 1.0**
-- Rewards correct classification and priority
-- Encourages meaningful, human-like responses
-- Penalizes incorrect or low-quality outputs
+- Score Range: **0.0 → 1.0**  
+- Encourages:
+  - Accurate classification  
+  - Correct prioritization  
+  - High-quality, human-like responses  
+- Penalizes:
+  - Incorrect decisions  
+  - Low-quality outputs  
 
 ---
 
+## 🧪 Tasks
+
+| Level   | Capability |
+|--------|-----------|
+| Easy   | Classification |
+| Medium | Classification + Priority |
+| Hard   | Full pipeline (classification + response + action) |
+
+---
+
+## 🏆 Performance
+
+- Baseline Score: **0.67**  
+- Optimized Score: **0.95+**
+
+Demonstrates strong improvements through structured evaluation and workflow design.
+
+---
+
+## 🛠️ Tech Stack
+
+- **LLM:** GPT-4o-mini  
+- **Backend:** Python  
+- **Containerization:** Docker  
+- **Evaluation:** Custom deterministic grading system  
+- **Config:** `.env`-based environment management  
+
+---
+
+## ▶️ Live Demo
+
+👉 https://huggingface.co/spaces/Shital2605/email-agent-openenv  
+
+Run the agent to see:
+- Real-time decision logs  
+- Multi-step reasoning outputs  
+- Final performance score  
+
+---
+
+## ⚙️ Setup
+
+### Install dependencies
+```bash
+pip install -r requirements.txt
 ## ⚙️ Setup
 
 ```bash
@@ -72,17 +139,18 @@ MODEL_NAME=gpt-4o-mini
 ## ▶️ Run
 python app.py
 
-## 🏆 Performance
-Baseline Score: 0.67
-Final Score: 0.95+
+## 🎯 Design Principles
 
-## ✅ Design Goals
-Robust (no crashes)
-Realistic (production-like behavior)
-Deterministic and fair evaluation
-Easy to extend
+- **Robustness** → No crashes, guaranteed outputs  
+- **Realism** → Simulates production email workflows  
+- **Determinism** → Consistent and fair evaluation  
+- **Extensibility** → Easy to plug in new tools/models  
 
-## 📌 Notes
-Works even if API fails (fallback system)
-No hardcoded secrets (uses .env)
-Stable and consistent scoring system
+---
+
+## 📌 Key Highlights
+
+- Combines **LLM reasoning + system design**, not just prompting  
+- Implements **agent orchestration with memory and fallback**  
+- Includes **evaluation loop (rare in most projects)**  
+- Designed with **production reliability in mind**  

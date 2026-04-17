@@ -15,19 +15,7 @@ The system simulates **real-world email triage workflows**, where reliability, c
 ---
 
 ## 🧩 System Architecture
-Incoming Email
-      ↓
-LLM Reasoning Engine
-      ↓
-Classification + Priority + Response
-      ↓
-Action Decision (Reply / Ignore / Escalate)
-      ↓
-Memory Layer (context consistency)
-      ↓
-Fallback System (guaranteed output)
-      ↓
-Deterministic Grader (evaluation)
+<img width="1024" height="1536" alt="ChatGPT Image Apr 17, 2026, 02_37_41 PM" src="https://github.com/user-attachments/assets/1358df3a-f9b8-463b-a896-d982735abe80" />
 
 
 ---

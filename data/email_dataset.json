@@ -1,0 +1,27 @@
+[
+  {
+    "email": "Hi, I need help resetting my password urgently.",
+    "category": "work",
+    "priority": "high"
+  },
+  {
+    "email": "Congratulations! You won a free iPhone. Click now.",
+    "category": "spam",
+    "priority": "low"
+  },
+  {
+    "email": "Let's meet this weekend for dinner.",
+    "category": "personal",
+    "priority": "medium"
+  },
+  {
+    "email": "Client meeting rescheduled to tomorrow morning.",
+    "category": "work",
+    "priority": "high"
+  },
+  {
+    "email": "Limited time offer! 90% discount on products.",
+    "category": "spam",
+    "priority": "low"
+  }
+]

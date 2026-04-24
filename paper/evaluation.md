@@ -1,74 +1,84 @@
+# 📊 Evaluation Metrics
+
 To systematically evaluate agent performance, we define the following metrics:
 
-Accuracy: Measures correctness of classification and prioritization decisions relative to ground truth labels.
+- **Accuracy:** Measures correctness of classification and prioritization decisions relative to ground truth labels.  
+- **Failure Rate:** Percentage of outputs that are incorrect, incomplete, or unusable in a practical setting.  
+- **Consistency:** Measures output stability by evaluating whether repeated runs on identical inputs produce consistent results.  
+- **Recovery Rate:** Quantifies the effectiveness of fallback mechanisms in correcting failures during intermediate steps.  
 
-Failure Rate: Percentage of outputs that are incorrect, incomplete, or unusable in a practical setting.
+These metrics provide a comprehensive assessment of both correctness and robustness across different agent architectures.
 
-Consistency: Measures output stability by evaluating whether repeated runs on identical inputs produce consistent results.
+---
 
-Recovery Rate: Quantifies the effectiveness of fallback mechanisms in correcting failures during intermediate steps.
-
-These metrics enable a comprehensive assessment of both correctness and robustness across different agent architectures.
-
-Metric Computation
+# 📐 Metric Computation
 
 To ensure reproducibility and consistency, each metric is computed using the following methodology:
 
-1. Accuracy
+---
+
+## 1. Accuracy
 
 Accuracy is calculated as the proportion of correctly predicted outputs compared to the ground truth.
 
 Accuracy = Number of Correct Predictions / Total Number of Samples
 
 A prediction is considered correct only if:
+- The **category** matches the ground truth  
+- The **priority** matches the ground truth  
 
-The category matches the ground truth
-The priority matches the ground truth
+---
 
-2. Failure Rate
+## 2. Failure Rate
 
 Failure rate measures the proportion of outputs that are incorrect, incomplete, or unusable.
 
 Failure Rate = Number of Failed Outputs / Total Number of Samples
 
+
 An output is considered a failure if:
+- The category or priority is incorrect  
+- The response is missing, irrelevant, or low quality  
+- The output format is invalid or incomplete  
 
-The category or priority is incorrect
-The response is missing, irrelevant, or low quality
-The output format is invalid or incomplete
+---
 
-3. Consistency
+## 3. Consistency
 
 Consistency evaluates whether the system produces stable outputs for identical inputs.
 
-Method:
+**Method:**
+- Each input is executed **three times**  
+- Outputs are compared across runs  
 
-Each input is executed 3 times
-Outputs are compared across runs
 Consistency = Number of Consistent Outputs / Total Number of Inputs
 
+
 An output is considered consistent if:
+- All runs produce identical structured results (category, priority, and action)
 
-All runs produce identical structured results (category, priority, action)
+---
 
-4. Recovery Rate
+## 4. Recovery Rate
 
 Recovery rate measures the effectiveness of fallback mechanisms in correcting failures.
 
 Recovery Rate = Number of Failures Corrected by Fallback / Total Number of Failures
 
+
 A failure is considered “recovered” if:
+- The initial output is incorrect  
+- The fallback mechanism produces a correct final output  
 
-The initial output is incorrect
-The fallback mechanism produces a correct final output
+---
 
-🧪 Evaluation Procedure
+# 🧪 Evaluation Procedure
 
 The evaluation process is conducted as follows:
 
-1. Each system (Baseline, Memory + Fallback, Advanced Reflective) is tested on the same dataset
-2. Outputs are generated and stored for each input
-3. Metrics are computed using the definitions above
-4. Results are compared across systems to analyze improvements in reliability
-Metrics are computed using the definitions above
-Results are aggregated and compared across systems to analyze improvements in reliability, consistency, and robustness
+1. Each system variant (Baseline, Memory + Fallback, Advanced Reflective) is evaluated on the same dataset  
+2. For each input:
+   - The agent generates a structured output  
+   - Outputs are recorded for analysis  
+3. Metrics are computed using the definitions above  
+4. Results are aggregated and compared across systems to analyze improvements in reliability, consistency, and robustness  

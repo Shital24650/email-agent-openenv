@@ -24,6 +24,7 @@ A prediction is considered correct only if:
 
 The category matches the ground truth
 The priority matches the ground truth
+
 2. Failure Rate
 
 Failure rate measures the proportion of outputs that are incorrect, incomplete, or unusable.
@@ -35,6 +36,7 @@ An output is considered a failure if:
 The category or priority is incorrect
 The response is missing, irrelevant, or low quality
 The output format is invalid or incomplete
+
 3. Consistency
 
 Consistency evaluates whether the system produces stable outputs for identical inputs.
@@ -48,6 +50,7 @@ Consistency = Number of Consistent Outputs / Total Number of Inputs
 An output is considered consistent if:
 
 All runs produce identical structured results (category, priority, action)
+
 4. Recovery Rate
 
 Recovery rate measures the effectiveness of fallback mechanisms in correcting failures.

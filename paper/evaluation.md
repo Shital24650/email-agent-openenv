@@ -61,13 +61,14 @@ A failure is considered “recovered” if:
 
 The initial output is incorrect
 The fallback mechanism produces a correct final output
+
 🧪 Evaluation Procedure
 
 The evaluation process is conducted as follows:
 
-Each system variant (Baseline, Memory + Fallback, Advanced Reflective) is tested on the same dataset
-For each input:
-The agent generates a structured output
-Outputs are logged for analysis
+1. Each system (Baseline, Memory + Fallback, Advanced Reflective) is tested on the same dataset
+2. Outputs are generated and stored for each input
+3. Metrics are computed using the definitions above
+4. Results are compared across systems to analyze improvements in reliability
 Metrics are computed using the definitions above
 Results are aggregated and compared across systems to analyze improvements in reliability, consistency, and robustness

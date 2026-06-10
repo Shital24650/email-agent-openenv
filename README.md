@@ -140,9 +140,7 @@ The architecture pattern here â€” LLM reasoning + deterministic evaluation 
 
 ---
 
-*Built by [Shital Parab](https://github.com/Shital24650)*- Response quality  
-
-This enables **measurable performance improvement**, similar to reinforcement learning feedback loops.
+*Built by [Shital Parab](https://github.com/Shital24650)*
 
 ---
 

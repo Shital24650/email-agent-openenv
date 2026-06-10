@@ -136,7 +136,7 @@ python app.py
 
 ## Why This Matters for Real Systems
 
-The architecture pattern here â€” LLM reasoning + deterministic evaluation + feedback loop — is directly applicable to any decision-automation system: incident triage, customer support routing, compliance flagging. The email domain is the testbed. The pattern is the product.
+The architecture pattern here - LLM reasoning + deterministic evaluation + feedback loop — is directly applicable to any decision-automation system: incident triage, customer support routing, compliance flagging. The email domain is the testbed. The pattern is the product.
 
 ---
 
